@@ -1,0 +1,99 @@
+$sidebar-opened-width: 250px; 
+
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
+
+  .sidebar-opened {
+    width: $sidebar-opened-width;
+  }
+
+  .sidebar-button-opened {
+    margin-left: $sidebar-opened-width;
+  }
+
+  .sidebar-closed {
+    width: 0px;
+  }
+
+  .sidebar-button-closed {
+    margin-left: 0px;
+  }
+  
+  .sidebar span {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+    cursor: pointer;
+    text-align: left;
+  }
+  
+  .sidebar span:hover, .span-selected  {
+    color: #f1f1f1 !important;
+  }
+
+  .span-selected {
+    color: #f1f1f1 !important;
+    box-shadow: inset 0px 0px 20px 0px white;
+  }
+  
+  .sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+    cursor: pointer;
+  }
+  
+  .openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #111;
+    color: white;
+    padding: 10px 15px;
+    border: 1px;
+    border-color: white;
+    border-style: groove;
+  }
+  
+  .openbtn:hover {
+    background-color: #444;
+  }
+  
+  .sidebar-button {
+    transition: margin-left .5s;
+    padding: 16px;
+    position: fixed;
+    top: 20px;
+  }
+
+  .filters {
+    cursor: default !important;
+  }
+
+  .options {
+    font-size: 17px !important;
+  }
+
+  .title {
+    margin-top: 40px;
+  }
+
+  /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar span {font-size: 18px;}
+}
