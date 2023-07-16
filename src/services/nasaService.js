@@ -8,6 +8,16 @@ const GetRequestToken = () => {
     return requestToken;
 }
 
+const validateAPIKey = async (API_KEY) => {
+    try {
+       const response = await axios.get(`${ROOT_API_URL}/curiosity/photos?sol=1000&page=2&api_key=${API_KEY}`);
+       return response;
+    }
+    catch (error) {
+        return { error: true };
+    }
+}
+
 const CancelRequestToken = ({requestToken}) => {
     try {
         requestToken.cancel();        
@@ -29,4 +39,4 @@ const GetImages = async ({requestToken, page, API_KEY, rover,dateFromPlanet, dat
     }
 }
 
-export { GetRequestToken, CancelRequestToken, GetImages }
+export { GetRequestToken, CancelRequestToken, GetImages, validateAPIKey }

@@ -1,9 +1,5 @@
 export const Rovers = [
     {
-        name: "ALL",
-        cameras: []
-    },
-    {
         name: "Curiosity",
         cameras: [
             { id: "FHAZ", name: "Front Hazard Avoidance Camera" },

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Modal from 'react-modal';
 import { GetRequestToken, CancelRequestToken, GetImages } from './../../services/nasaService';
-
-import './Galerry.scss';
+import { useDispatch, useSelector } from 'react-redux';
 import { Sidebar } from '../Sidebar/Sidebar';
 
-const API_KEY = 'sSqX2oKXjFXhvIyjNvenSbDlFF3bKrUor1GIad4k';
+import './Galerry.scss';
+
 let requestToken;
 
 const Gallery = () => {
@@ -14,6 +14,7 @@ const Gallery = () => {
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImageUrl, setModalImageUrl] = useState('');
+  const general = useSelector((state) => state.general);
 
   const openModal = (url) => {
     setModalImageUrl(url);
@@ -35,10 +36,18 @@ const Gallery = () => {
     }
   }, []);
 
-  const fetchImages = async () => {
-    const newImages = await GetImages({requestToken, page, API_KEY, rover: "curiosity", dateFromPlanet: "sol", dateFromDate: 1000});
-    setImages((prevImages) => [...prevImages, ...newImages]);
-    setPage((prevPage) => prevPage + 1);
+  useEffect(() => {
+    setPage(0);
+    setImages([]);
+    fetchImages();
+  }, [general.roverSelected.name])
+
+  const fetchImages = async () => {debugger;
+    if (general.roverSelected.name) {
+      const newImages = await GetImages({requestToken, page, API_KEY: general.API_KEY, rover: general.roverSelected.name, dateFromPlanet: "sol", dateFromDate: 1000});
+      setImages((prevImages) => [...prevImages, ...newImages]);
+      setPage((prevPage) => prevPage + 1);
+    }  
   };
 
   return (

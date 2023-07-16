@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Rovers } from '../../utils/configData';
+import { setRoverSelected, setCameraSelected } from '../../redux/generalSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import './Sidebar.scss';
 
 export const Sidebar = () => {
     const [sidebarOpened, setSidebarOpened] = useState(false);
-    const [roverFilter, setRoverFilter] = useState(null);
-    const [cameraFilter, setCameraFilter] = useState(null);
+    const dispatch = useDispatch();
+    const general = useSelector((state) => state.general);
 
     const openNav = () => {
         setSidebarOpened((sidebarOpened) => !sidebarOpened);
@@ -15,14 +17,21 @@ export const Sidebar = () => {
         setSidebarOpened(false);
     }
 
-    const selectRover = ({rover}) => {
-        setRoverFilter(rover);
-        setCameraFilter(null);
+    const selectRover = ({rover}) => {debugger;
+        dispatch(setRoverSelected(rover));
+        dispatch(setCameraSelected(null));
     }
 
     const selectCamera = ({camera}) => {
-        setCameraFilter(camera);
+        dispatch(setCameraSelected(camera.name));
     }
+
+    useEffect(() => {
+        //set default rover
+        if (!general.roverSelected.name) {
+            dispatch(setRoverSelected(Rovers.find(rover => rover.name === 'Curiosity')));
+        }
+    }, [])
 
     return (
         <>
@@ -31,14 +40,14 @@ export const Sidebar = () => {
                 <span><b>Select Rover:</b></span>
                 {
                     Rovers.map((rover, index) => (
-                        <span className={`options ${ roverFilter && roverFilter.name === rover.name ? 'span-selected' : '' }`} 
+                        <span className={`options ${ general.roverSelected && general.roverSelected.name === rover.name ? 'span-selected' : '' }`} 
                                 key={index} 
                                 onClick={() => selectRover({rover})}>{rover.name}</span>
                     ))
                 }
-                <span className='title'>{roverFilter && roverFilter.cameras.length > 0 && <b>Select Camera:</b>}</span>
+                <span className='title'>{general.roverSelected && general.roverSelected.cameras.length > 0 && <b>Select Camera:</b>}</span>
                 {   
-                    roverFilter && (roverFilter.cameras.map((camera, index) => <span onClick={() => selectCamera({camera})} className={`options ${ cameraFilter && cameraFilter.name === camera.name ? 'span-selected' : '' }`} key={index}>{camera.name}</span>))
+                    general.roverSelected && (general.roverSelected.cameras.map((camera, index) => <span onClick={() => selectCamera({camera})} className={`options ${ general.cameraSelected && general.cameraSelected === camera.name ? 'span-selected' : '' }`} key={index}>{camera.name}</span>))
                 }                
             </div>
             
