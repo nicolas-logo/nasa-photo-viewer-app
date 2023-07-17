@@ -86,7 +86,7 @@ const Gallery = () => {
         dataLength={images.length}
         next={fetchImages}
         hasMore={true}
-        loader={noPhotos && <h4 style={{color:"white"}}>No photos retrieved</h4>}
+        loader={noPhotos && images.length !== 0 && <h4 style={{color:"white"}}>No photos retrieved</h4>}
       >
         {images.map((image, index) => (
           <img
