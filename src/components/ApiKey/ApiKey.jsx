@@ -14,12 +14,14 @@ export const ApiKey = () => {
   let interval = null
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
+  // runs the functions with the animation of the letters indefinitely
   try {
     setInterval(() => {
       letterAnimation()
     }, 5000)
   } catch (error) {}
 
+  // checks if the user pressed Enter to validate the key
   const handleKeyPress = async (event) => {
     if (event.key === 'Enter') {
       setValidateState('Validating')
@@ -34,10 +36,12 @@ export const ApiKey = () => {
     }
   }
 
+  // updates the api key whenever the user press a key
   const handleChange = (event) => {
     setApiKeyValue(event.target.value)
   }
 
+  // manage the animation of the letters for the title
   const letterAnimation = () => {
     let iteration = 0
 

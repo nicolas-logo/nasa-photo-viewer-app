@@ -15,14 +15,16 @@ export const Sidebar = () => {
   const dispatch = useDispatch()
   const general = useSelector((state) => state.general)
   const [isEarthDate, setIsEarthDate] = useState(true)
-  const [earthDate, setEarthDate] = useState(new Date('01/01/2020'))
+  const [earthDate, setEarthDate] = useState(new Date())
   const [martianDate, setMartianDate] = useState(1500)
 
+  // updates the earth date when changed
   const handleEarthDateChange = (date) => {
     setEarthDate(date)
     dispatch(setDateSelected(date))
   }
 
+  // updates the martian date when changed
   const handleMartianDateChange = (e) => {
     const value = e.target.value
     // Check if the value is a valid number and within the range
@@ -31,16 +33,19 @@ export const Sidebar = () => {
     }
   }
 
+  // triggers the dispatch when the user blur the martian date input
   const handleMartianDateBlur = () => {
     dispatch(setDateSelected(martianDate))
   }
 
+  // triggers the dispatch when the user press Enter on the martian date input
   const handleMartianDateKeyPress = async (event) => {
     if (event.key === 'Enter') {
       dispatch(setDateSelected(martianDate))
     }
   }
 
+  // triggers the dispatch when the user changes the date type
   const handleToggleDate = () => {
     if (!isEarthDate) {
       dispatch(setDateSelected(earthDate))
@@ -51,28 +56,34 @@ export const Sidebar = () => {
     setIsEarthDate(!isEarthDate)
   }
 
+  // opens the sidebar menu
   const openNav = () => {
     setSidebarOpened((sidebarOpened) => !sidebarOpened)
   }
 
+  // closes the sidebar menu
   const closeNav = () => {
     setSidebarOpened(false)
   }
 
+  // triggers the dispatch when the user select a rover, sets cameras on null
   const selectRover = ({ rover }) => {
     dispatch(setRoverSelected(rover))
     dispatch(setCameraSelected(null))
   }
 
+  // triggers the dispatch when the user select a camera
   const selectCamera = ({ camera }) => {
     dispatch(setCameraSelected(camera))
   }
 
+  // resets the saved api key
   const forgetAPIKey = () => {
     localStorage.removeItem('API_KEY')
     dispatch(setApiKey(null))
   }
 
+  // saves the current config
   const saveConfig = () => {
     localStorage.setItem('roverSelected', JSON.stringify(general.roverSelected))
     localStorage.setItem('cameraSelected', JSON.stringify(general.cameraSelected))
@@ -80,6 +91,7 @@ export const Sidebar = () => {
     localStorage.setItem('isEarthDate', isEarthDate)
   }
 
+  // loads the config saved
   const loadConfig = () => {
     // eslint-disable-next-line no-debugger
     debugger
@@ -88,6 +100,7 @@ export const Sidebar = () => {
     const dateSelected = localStorage.getItem('dateSelected')
     const isED = localStorage.getItem('isEarthDate')
 
+    // since we're using the same var for earth and martian date, checks which one is saved
     if ((isED === 'true')) {
       setIsEarthDate(true)
       setEarthDate(new Date(dateSelected + 'T00:00:00'))
@@ -117,6 +130,7 @@ export const Sidebar = () => {
                     <span><b>Select Rover:</b></span>
                     {
                         Rovers.map((rover, index) => (
+                            // if the rover is the selected one, is highlighted
                             <span className={`options ${general.roverSelected && general.roverSelected.name === rover.name ? 'span-selected' : ''}`}
                                     key={index}
                                     onClick={() => selectRover({ rover })}>{rover.name}</span>
@@ -124,6 +138,7 @@ export const Sidebar = () => {
                     }
                     <span className='title'>{general.roverSelected && general.roverSelected.cameras.length > 0 && <b>Select Camera:</b>}</span>
                     {
+                        // if the camera is the selected one, is highlighted
                         general.roverSelected && (general.roverSelected.cameras.map((camera, index) => <span onClick={() => selectCamera({ camera })} className={`options ${general.cameraSelected && general.cameraSelected.name === camera.name ? 'span-selected' : ''}`} key={index}>{camera.name}</span>))
                     }
                 </div>
@@ -166,7 +181,7 @@ export const Sidebar = () => {
                             onChange={handleMartianDateChange}
                             onBlur={handleMartianDateBlur}
                             onKeyDown={handleMartianDateKeyPress}
-                            max={9999}
+                            max={99999}
                         />
                         }
                     </div>

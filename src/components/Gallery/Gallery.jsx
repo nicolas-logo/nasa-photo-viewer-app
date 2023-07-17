@@ -5,6 +5,7 @@ import { GetRequestToken, CancelRequestToken, GetImages } from './../../services
 import { useSelector } from 'react-redux'
 import { Sidebar } from '../Sidebar/Sidebar'
 import { isDateVerifier } from '../../utils/utilFunctions'
+import { InfoMessages } from '../InfoMessages/InfoMessages'
 
 import './Galerry.scss'
 
@@ -20,15 +21,19 @@ const Gallery = () => {
   const [modalImageUrl, setModalImageUrl] = useState('')
   const general = useSelector((state) => state.general)
 
+  // open the image selected on a modal when clicked
   const openModal = (url) => {
     setModalImageUrl(url)
     setIsModalOpen(true)
   }
 
+  // close the modal of the image selected
   const closeModal = () => {
     setIsModalOpen(false)
   }
 
+  // when the component is rendered, ask for a token for the requests
+  // and gets the default images
   useEffect(() => {
     requestToken = GetRequestToken()
 
@@ -40,6 +45,8 @@ const Gallery = () => {
     }
   }, [])
 
+  // when the user select a rover, a camera or change the date
+  // on the Sidebar component, it refresh que search
   useEffect(() => {
     setPage(0)
     setImages([])
@@ -50,12 +57,15 @@ const Gallery = () => {
     general.dateSelected
   ])
 
+  // get images from the api
   const fetchImages = async () => {
     setNoPhotos(false)
     setLoading(true)
 
     if (general.roverSelected.name) {
+      // since we're using the same var for both Martian and Earth date, it checks which one is it
       const dateFromPlanet = isDateVerifier(general.dateSelected) ? 'earth_date' : 'sol'
+
       const newImages = await GetImages({
         requestToken,
         page,
@@ -66,6 +76,7 @@ const Gallery = () => {
         dateFromDate: general.dateSelected
       })
 
+      // the api could throw an error for overuse, so we handle that
       if (!newImages.error) {
         setApiErrorMessage('')
         setImages((prevImages) => [...prevImages, ...newImages])
@@ -80,6 +91,9 @@ const Gallery = () => {
 
   return (
     <div>
+      {/* using Infinite scroll to load new images
+          when the user reach the bottom or show the message
+      */}
       <InfiniteScroll
         dataLength={images.length}
         next={fetchImages}
@@ -95,9 +109,11 @@ const Gallery = () => {
             className='images'
           />
         ))}
-        {apiErrorMessage !== '' && <h4 className='text-danger'>apiErrorMessage</h4>}
-        {images.length === 0 && !loading && <h4 className='text-warning'>No photos retrieved</h4>}
-        {loading && <h4 className='text-white'>Loading...</h4>}
+        <InfoMessages
+          apiErrorMessage={apiErrorMessage}
+          imagesLength={images.length}
+          loading={loading}
+        />
       </InfiniteScroll>
       <Sidebar />
       <Modal portalClassName='photo-modal' isOpen={isModalOpen} onRequestClose={closeModal}>
