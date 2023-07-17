@@ -28,7 +28,16 @@ export const Sidebar = () => {
     // Check if the value is a valid number and within the range
     if (!isNaN(value) && value >= 0 && value <= 9999) {
       setMartianDate(value)
-      dispatch(setDateSelected(value))
+    }
+  }
+
+  const handleMartianDateBlur = () => {
+    dispatch(setDateSelected(martianDate))
+  }
+
+  const handleMartianDateKeyPress = async (event) => {
+    if (event.key === 'Enter') {
+      dispatch(setDateSelected(martianDate))
     }
   }
 
@@ -62,6 +71,35 @@ export const Sidebar = () => {
   const forgetAPIKey = () => {
     localStorage.removeItem('API_KEY')
     dispatch(setApiKey(null))
+  }
+
+  const saveConfig = () => {
+    localStorage.setItem('roverSelected', JSON.stringify(general.roverSelected))
+    localStorage.setItem('cameraSelected', JSON.stringify(general.cameraSelected))
+    localStorage.setItem('dateSelected', general.dateSelected)
+    localStorage.setItem('isEarthDate', isEarthDate)
+  }
+
+  const loadConfig = () => {
+    // eslint-disable-next-line no-debugger
+    debugger
+    const roverSelected = localStorage.getItem('roverSelected')
+    const cameraSelected = localStorage.getItem('cameraSelected')
+    const dateSelected = localStorage.getItem('dateSelected')
+    const isED = localStorage.getItem('isEarthDate')
+
+    if ((isED === 'true')) {
+      setIsEarthDate(true)
+      setEarthDate(new Date(dateSelected + 'T00:00:00'))
+      dispatch(setDateSelected(new Date(dateSelected + 'T00:00:00')))
+    } else {
+      setIsEarthDate(false)
+      setMartianDate(Number(dateSelected))
+      dispatch(setDateSelected(Number(dateSelected)))
+    }
+
+    dispatch(setRoverSelected(JSON.parse(roverSelected)))
+    dispatch(setCameraSelected(JSON.parse(cameraSelected)))
   }
 
   useEffect(() => {
@@ -126,10 +164,14 @@ export const Sidebar = () => {
                             type="number"
                             value={martianDate}
                             onChange={handleMartianDateChange}
+                            onBlur={handleMartianDateBlur}
+                            onKeyDown={handleMartianDateKeyPress}
                             max={9999}
                         />
                         }
                     </div>
+                    <button className='btn-apikey btn btn-success' onClick={saveConfig}>Save Configuration</button>
+                    <button className='mt-2 btn btn-info' onClick={loadConfig}>Load Configuration</button>
                 </div>
                 <button className='btn-apikey btn btn-danger' onClick={forgetAPIKey}>Forget API KEY</button>
 
