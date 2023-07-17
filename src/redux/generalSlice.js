@@ -6,7 +6,11 @@ const initialState = {
         name: "",
         cameras: []
     },
-    cameraSelected: ""
+    cameraSelected: {
+        id: "",
+        name: ""
+    },
+    dateSelected: "2020-01-22"
 };
 
 export const generalSlice = createSlice({
@@ -17,14 +21,22 @@ export const generalSlice = createSlice({
             state.API_KEY = action.payload;
         },
         setRoverSelected: (state, action) => {
-            state.roverSelected.name = action.payload.name;
-            state.roverSelected.cameras = action.payload.cameras;
+            state.roverSelected = action.payload
         },
         setCameraSelected: (state, action) => {
             state.cameraSelected = action.payload;
+        },
+        setDateSelected: (state, action) => {
+            state.dateSelected = action.payload instanceof Date ? 
+                                  action.payload.toLocaleDateString('sv-SE', { month: '2-digit', day: '2-digit', year: 'numeric' })
+                                : action.payload;
         }
     }
 });
 
-export const { setApiKey, setRoverSelected, setCameraSelected } = generalSlice.actions;
+export const { 
+    setApiKey, 
+    setRoverSelected, 
+    setCameraSelected,
+    setDateSelected } = generalSlice.actions;
 export default generalSlice.reducer;

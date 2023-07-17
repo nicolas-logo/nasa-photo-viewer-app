@@ -26,16 +26,29 @@ const CancelRequestToken = ({requestToken}) => {
     }
 }
 
-const GetImages = async ({requestToken, page, API_KEY, rover,dateFromPlanet, dateFromDate}) => {
+const GetImages = async ({requestToken, page, API_KEY, rover, camera, dateFromPlanet, dateFromDate}) => {
     try {
-        const response = await axios.get(`${ROOT_API_URL}/${rover}/photos?${dateFromPlanet}=${dateFromDate}&page=${page}&api_key=${API_KEY}`, {
+        let url = `${ROOT_API_URL}/${rover}/photos?${dateFromPlanet}=${dateFromDate}&page=${page}&api_key=${API_KEY}`;
+        url = camera ? `${url}&camera=${camera}` : url;
+        const response = await axios.get(url, {
             cancelToken: requestToken.token
         });
         
         return response.data.photos.map(photo => PhotosContentType(photo));
 
     } catch (error) {
-        console.log("GetImages error:", error);
+        return ErrorHandler(error.response.data.error);
+    }
+}
+
+const ErrorHandler = (error) => {
+    switch (error.code) {
+        case 'OVER_RATE_LIMIT':
+            return {
+                error: true,
+                message: "Your API Key has have exceeded your rate limit. Try again later or contact us at https://api.nasa.gov:443/contact/ for assistance"
+            };
+        default: return { error: true, message: error.message };
     }
 }
 
