@@ -1,6 +1,6 @@
 import './ApiKey.scss'
 import './../../../node_modules/bootstrap/dist/css/bootstrap.min.css'
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { validateAPIKey } from '../../services/nasaService'
 import { useDispatch } from 'react-redux'
 import { setApiKey } from '../../redux/generalSlice'
@@ -10,8 +10,8 @@ export const ApiKey = () => {
   const spanInput = useRef(null)
   const [apiKeyValue, setApiKeyValue] = useState('')
   const [validateState, setValidateState] = useState('')
-
-  let interval = null
+  const [intervalId, setIntervalId] = useState(null)
+  // let interval = null
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
   // runs the functions with the animation of the letters indefinitely
@@ -42,12 +42,12 @@ export const ApiKey = () => {
   }
 
   // manage the animation of the letters for the title
-  const letterAnimation = () => {
+  const letterAnimation = useCallback(() => {
     let iteration = 0
 
-    clearInterval(interval)
+    if (intervalId) clearInterval(intervalId)
 
-    interval = setInterval(() => {
+    setIntervalId(setInterval(() => {
       if (spanInput.current) {
         spanInput.current.innerText = spanInput.current.innerText
           .split('')
@@ -61,15 +61,15 @@ export const ApiKey = () => {
           .join('')
 
         if (iteration >= spanInput.current.dataset.value.length) {
-          clearInterval(interval)
+          clearInterval(intervalId)
         }
 
         iteration += 1 / 3
       } else {
-        clearInterval(interval)
+        clearInterval(intervalId)
       }
-    }, 30)
-  }
+    }, 30))
+  }, [intervalId])
 
   return (
         <div className="apiKey">
