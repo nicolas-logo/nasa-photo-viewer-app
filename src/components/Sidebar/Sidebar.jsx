@@ -184,6 +184,7 @@ export const Sidebar = () => {
                         isEarthDate
                           ? <DatePicker
                                 selected={earthDate}
+                                showYearDropdown
                                 onChange={handleEarthDateChange}
                                 dateFormat="yyyy-MM-dd"
                             />
