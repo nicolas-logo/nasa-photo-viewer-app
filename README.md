@@ -1,70 +1,84 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# NASA ROVERS PHOTOS APP
 
 ## Available Scripts
-
-In the project directory, you can run:
 
 ### `npm start`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner 
 
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## About the App
+The App is deployed on my personal AWS Amplify:\
+https://master.d370m4f0hq237p.amplifyapp.com/
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### API KEY
+When you enter on the site for the first time it will ask you for your NASA API KEY.\
+If you don't have one, you can generate it at https://api.nasa.gov/ \
+Since the API KEY is personal and got a limit on the number of request, I think it's ok to ask for it.\
+In the case that you don't want to do it in this way, it can be done by generating a general API KEY for the application and saving it as an environment var.
+\
+\
+![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/2484388c-0257-4ae9-a81e-b76e7bfce0af)
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Once you enter your API KEY and press ENTER, it will be validated, if not, It will show an error message.
+After the API KEY is validated, it will be stored on the local storage, so you won't have to enter it again when revisiting.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/2c36bbcb-5d7c-4b7f-9385-33b789aa35b9)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
+### GALLERY
+When you enter in the gallery, you will the Configuration button and the photos of the rover Curiosity on a set date. At first, it was developed to show the current date photos, but since not every day got photos uploaded I decided to show cool photos of a set date at the beginning!
+![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/cdff4776-40e2-4a15-a018-b757495162d0)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+When you click on any photo it will be displayed on a popup, to close it just click outside.
+![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/026f845b-13c8-431e-9855-27596fcb04c7)
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+When scrolling down, the gallery will be updated with new photos from the API until it retrieves no more by the current configuration, in that case, it will show the message "No photos retrieved"
+![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/34fab958-cd23-4153-bcf2-de4ab6ec61e6)
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+If the current filters don't retrieve any photo, it will show the message "No photos retrieved" on yellow
+![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/01b5802a-cf10-41bf-a045-449e830d555d)
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Configurations
+When clicking on the Configurations button it will display the Configuration Panel.\
+Here you can set some filters like selecting a specific rover (Curiosity, Opportunity, or Spirit) and filter photos of one of their cameras.\
+![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/99fcced0-aaf9-4b1d-95b4-ac411174d7c9)
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+If you go down on the panel, you will see that you can also filter by date.\
+To do this you can select the date from the photos that were taken, you can switch between Earth Date and Martian Date.\
+For Earch Date you will have a date picker to select the date from:\
+![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/8f43993f-74ac-487f-85b9-243ff74dcf29)
 
-### `npm run build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+For Martian Date you will have an input for a number, this number represents the number of days since the rover landed on Mars, to set the number just press ENTER:\
+![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/6a8ab799-9a18-447a-b279-a8396777891a)
+
+If you change the filters to trigger a request to the API before the previous request is resolved, the previous request is going to be canceled and just the newest it's going to be responved.\
+This prevents API's overuse:
+![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/6ea9c38f-7417-4d62-a949-e0c7fff22649)
+
+
+If you go to the bottom of the panel you will see 3 buttons: Save Configuration, Load Configuration, and Forget API KEY.\
+- **Save Configuration:** Saves the current filters on the local storge.
+- **Load Configuration:** Loads the filters saved on the local storage.
+- **Forget API KEY:** Deletes the API KEY from the local storage, you will be redirected to the API KEY page\
+![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/57354e76-6e69-4f35-b48a-4b215739563f)
+
+
