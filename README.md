@@ -13,7 +13,11 @@ Launches the test runner
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
+Builds the app for production to the `build` folder.
+
+### `npm run lint`
+
+Runs eslint over the code
 
 ## About the App
 The App is deployed on my personal AWS Amplify:\
