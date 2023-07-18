@@ -198,7 +198,7 @@ export const Sidebar = () => {
                         }
                     </div>
                     <button className='btn-apikey btn btn-success' onClick={saveConfig}>{saveButtonText}</button>
-                    <button className='mt-2 btn btn-info' onClick={loadConfig}>Load Configuration</button>
+                    <button className='mt-2 btn btn-secondary' onClick={loadConfig}>Load Configuration</button>
                 </div>
                 <button className='btn-apikey btn btn-danger' onClick={forgetAPIKey}>Forget API KEY</button>
 
