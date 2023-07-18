@@ -70,10 +70,14 @@ For Earch Date you will have a date picker to select the date from:\
 For Martian Date you will have an input for a number, this number represents the number of days since the rover landed on Mars, to set the number just press ENTER:\
 ![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/6a8ab799-9a18-447a-b279-a8396777891a)
 
+If you change the filters to trigger a request to the API before the previous request is resolved, the previous request is going to be canceled and just the newest it's going to be responved.\
+This prevents API's overuse:
+![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/6ea9c38f-7417-4d62-a949-e0c7fff22649)
+
 
 If you go to the bottom of the panel you will see 3 buttons: Save Configuration, Load Configuration, and Forget API KEY.\
-- **Save Configuration:** Saves the current filters on the local storge.\
-- **Load Configuration:** Loads the filters saved on the local storage.\
+- **Save Configuration:** Saves the current filters on the local storge.
+- **Load Configuration:** Loads the filters saved on the local storage.
 - **Forget API KEY:** Deletes the API KEY from the local storage, you will be redirected to the API KEY page\
 ![image](https://github.com/nicolas-logo/nasa-photo-viewer-app/assets/26005281/57354e76-6e69-4f35-b48a-4b215739563f)
 
