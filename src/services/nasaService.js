@@ -35,7 +35,7 @@ const GetImages = async ({ requestToken, page, API_KEY, rover, camera, dateFromP
 
     return response.data.photos.map(photo => PhotosContentType(photo))
   } catch (error) {
-    return ErrorHandler(error.response.data.error)
+    return error.response ? ErrorHandler(error.response.data.error) : ErrorHandler(error)
   }
 }
 
@@ -45,6 +45,11 @@ const ErrorHandler = (error) => {
       return {
         error: true,
         message: 'Your API Key has have exceeded your rate limit. Try again later or contact us at https://api.nasa.gov:443/contact/ for assistance'
+      }
+    case 'ERR_CANCELED':
+      return {
+        error: true,
+        message: 'Request canceled'
       }
     default: return { error: true, message: error.message }
   }

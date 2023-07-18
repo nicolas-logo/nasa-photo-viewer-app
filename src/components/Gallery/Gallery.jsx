@@ -48,6 +48,8 @@ const Gallery = () => {
   // when the user select a rover, a camera or change the date
   // on the Sidebar component, it refresh que search
   useEffect(() => {
+    CancelRequestToken({ requestToken })
+    requestToken = GetRequestToken()
     setPage(0)
     setImages([])
     fetchImages()
