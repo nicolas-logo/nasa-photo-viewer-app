@@ -93,7 +93,7 @@ export const ApiKey = () => {
                     {validateState === 'Validating' && <span className='validate-text text-warning'>Validating...</span>}
                 </div>
             </div>
-            <div className='span-generate'><span>Don`&apos;t have it? Please generate one visiting <a href='https://api.nasa.gov/' target='_blank' rel="noreferrer">https://api.nasa.gov/</a></span></div>
+            <div className='span-generate'><span>Don&apos;t have it? Please generate one visiting <a href='https://api.nasa.gov/' target='_blank' rel="noreferrer">https://api.nasa.gov/</a></span></div>
         </div>
   )
 }
