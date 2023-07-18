@@ -1,6 +1,6 @@
 import './ApiKey.scss'
 import './../../../node_modules/bootstrap/dist/css/bootstrap.min.css'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, useEffect } from 'react'
 import { validateAPIKey } from '../../services/nasaService'
 import { useDispatch } from 'react-redux'
 import { setApiKey } from '../../redux/generalSlice'
@@ -10,16 +10,51 @@ export const ApiKey = () => {
   const spanInput = useRef(null)
   const [apiKeyValue, setApiKeyValue] = useState('')
   const [validateState, setValidateState] = useState('')
-  const [intervalId, setIntervalId] = useState(null)
-  // let interval = null
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-  // runs the functions with the animation of the letters indefinitely
-  try {
-    setInterval(() => {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  let animationFrameId = null
+  let intervalId = null
+
+  // Animation loop for the title letters
+  const letterAnimation = useCallback(() => {
+    let iteration = 0
+
+    const animate = () => {
+      if (spanInput.current) {
+        spanInput.current.innerText = spanInput.current.dataset.value
+          .split('')
+          .map((letter, index) => {
+            if (index < iteration) {
+              return spanInput.current.dataset.value[index]
+            }
+            return letters[Math.floor(Math.random() * 26)]
+          })
+          .join('')
+
+        if (iteration >= spanInput.current.dataset.value.length) {
+          iteration = 0 // Reset the iteration for continuous animation
+        } else {
+          animationFrameId = requestAnimationFrame(animate)
+          iteration += 1 / 3
+        }
+      }
+    }
+
+    animationFrameId = requestAnimationFrame(animate)
+  }, [letters])
+
+  // Start the animation loop on component mount
+  useEffect(() => {
+    intervalId = setInterval(() => {
       letterAnimation()
     }, 5000)
-  } catch (error) {}
+
+    return () => {
+      // Clean up the animation frames and interval on component unmount
+      clearInterval(intervalId)
+      cancelAnimationFrame(animationFrameId)
+    }
+  }, [letterAnimation])
 
   // checks if the user pressed Enter to validate the key
   const handleKeyPress = async (event) => {
@@ -41,59 +76,29 @@ export const ApiKey = () => {
     setApiKeyValue(event.target.value)
   }
 
-  // manage the animation of the letters for the title
-  const letterAnimation = useCallback(() => {
-    let iteration = 0
-
-    if (intervalId) clearInterval(intervalId)
-
-    setIntervalId(setInterval(() => {
-      if (spanInput.current) {
-        spanInput.current.innerText = spanInput.current.innerText
-          .split('')
-          .map((letter, index) => {
-            if (index < iteration) {
-              return spanInput.current.dataset.value[index]
-            }
-
-            return letters[Math.floor(Math.random() * 26)]
-          })
-          .join('')
-
-        if (iteration >= spanInput.current.dataset.value.length) {
-          clearInterval(intervalId)
-        }
-
-        iteration += 1 / 3
-      } else {
-        clearInterval(intervalId)
-      }
-    }, 30))
-  }, [intervalId])
-
   return (
-        <div className="apiKey">
-           <h1 id="title" className="centered">
-                Welcome to <span className="fancy"><b>Mars</b></span>
-            </h1>
-            <div className='row'>
-                <div className='col-md-8 offset-md-2 mt-5'>
-                    <span className='spanInput'
-                            ref={spanInput}
-                            data-value="Enter your API KEY">Enter your API KEY</span>
-                    <input
-                        type='text'
-                        className="form-control apiInput"
-                        placeholder="API Key..."
-                        maxLength="50"
-                        value={apiKeyValue}
-                        onChange={handleChange}
-                        onKeyDown={handleKeyPress}></input>
-                    {validateState === 'Error' && <span className='validate-text text-danger'>Wrong API KEY</span>}
-                    {validateState === 'Validating' && <span className='validate-text text-warning'>Validating...</span>}
-                </div>
-            </div>
-            <div className='span-generate'><span>Don&apos;t have it? Please generate one visiting <a href='https://api.nasa.gov/' target='_blank' rel="noreferrer">https://api.nasa.gov/</a></span></div>
+    <div className="apiKey">
+      <h1 id="title" className="centered">
+        Welcome to <span className="fancy"><b>Mars</b></span>
+      </h1>
+      <div className='row'>
+        <div className='col-md-8 offset-md-2 mt-5'>
+          <span className='spanInput'
+            ref={spanInput}
+            data-value="Enter your API KEY">Enter your API KEY</span>
+          <input
+            type='text'
+            className="form-control apiInput"
+            placeholder="API Key..."
+            maxLength="50"
+            value={apiKeyValue}
+            onChange={handleChange}
+            onKeyDown={handleKeyPress}></input>
+          {validateState === 'Error' && <span className='validate-text text-danger'>Wrong API KEY</span>}
+          {validateState === 'Validating' && <span className='validate-text text-warning'>Validating...</span>}
         </div>
+      </div>
+      <div className='span-generate'><span>Don&apos;t have it? Please generate one visiting <a href='https://api.nasa.gov/' target='_blank' rel="noreferrer">https://api.nasa.gov/</a></span></div>
+    </div>
   )
 }
