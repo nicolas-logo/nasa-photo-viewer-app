@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InfoMessages tests should match the snapshot 1`] = `
+<div
+  data-testid="info-messages"
+>
+  <h4
+    className="text-danger"
+  />
+  <h4
+    className="text-warning"
+  >
+    No photos retrieved
+  </h4>
+</div>
+`;
+
+exports[`InfoMessages tests should should match the snapshot 1`] = `
+<div
+  data-testid="info-messages"
+>
+  <h4
+    className="text-danger"
+  />
+  <h4
+    className="text-warning"
+  >
+    No photos retrieved
+  </h4>
+</div>
+`;

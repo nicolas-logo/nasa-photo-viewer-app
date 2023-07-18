@@ -15,8 +15,9 @@ export const Sidebar = () => {
   const dispatch = useDispatch()
   const general = useSelector((state) => state.general)
   const [isEarthDate, setIsEarthDate] = useState(true)
-  const [earthDate, setEarthDate] = useState(new Date())
+  const [earthDate, setEarthDate] = useState(new Date('2020-01-22T00:00:00'))
   const [martianDate, setMartianDate] = useState(1500)
+  const [saveButtonText, setSaveButtonText] = useState('Save Configuration')
 
   // updates the earth date when changed
   const handleEarthDateChange = (date) => {
@@ -89,12 +90,12 @@ export const Sidebar = () => {
     localStorage.setItem('cameraSelected', JSON.stringify(general.cameraSelected))
     localStorage.setItem('dateSelected', general.dateSelected)
     localStorage.setItem('isEarthDate', isEarthDate)
+
+    setSaveButtonText('Configuration Saved!')
   }
 
   // loads the config saved
   const loadConfig = () => {
-    // eslint-disable-next-line no-debugger
-    debugger
     const roverSelected = localStorage.getItem('roverSelected')
     const cameraSelected = localStorage.getItem('cameraSelected')
     const dateSelected = localStorage.getItem('dateSelected')
@@ -114,6 +115,17 @@ export const Sidebar = () => {
     dispatch(setRoverSelected(JSON.parse(roverSelected)))
     dispatch(setCameraSelected(JSON.parse(cameraSelected)))
   }
+
+  // reset the button text on configuration change
+  useEffect(() => {
+    setSaveButtonText('Save Configuration')
+  }, [
+    general.roverSelected,
+    general.cameraSelected,
+    isEarthDate,
+    earthDate,
+    martianDate
+  ])
 
   useEffect(() => {
     // set default rover
@@ -185,7 +197,7 @@ export const Sidebar = () => {
                         />
                         }
                     </div>
-                    <button className='btn-apikey btn btn-success' onClick={saveConfig}>Save Configuration</button>
+                    <button className='btn-apikey btn btn-success' onClick={saveConfig}>{saveButtonText}</button>
                     <button className='mt-2 btn btn-info' onClick={loadConfig}>Load Configuration</button>
                 </div>
                 <button className='btn-apikey btn btn-danger' onClick={forgetAPIKey}>Forget API KEY</button>
