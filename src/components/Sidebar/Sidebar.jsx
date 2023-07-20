@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Rovers } from '../../utils/configData'
 import { setRoverSelected, setCameraSelected, setDateSelected, setApiKey } from '../../redux/generalSlice'
 import { useDispatch, useSelector } from 'react-redux'
@@ -20,101 +20,106 @@ export const Sidebar = () => {
   const [saveButtonText, setSaveButtonText] = useState('Save Configuration')
 
   // updates the earth date when changed
-  const handleEarthDateChange = (date) => {
+  const handleEarthDateChange = useCallback((date) => {
     setEarthDate(date)
     dispatch(setDateSelected(date))
-  }
+  }, [dispatch])
 
   // updates the martian date when changed
-  const handleMartianDateChange = (e) => {
+  const handleMartianDateChange = useCallback((e) => {
     const value = e.target.value
-    // Check if the value is a valid number and within the range
     if (!isNaN(value) && value >= 0 && value <= 9999) {
       setMartianDate(value)
     }
-  }
+  }, [])
 
   // triggers the dispatch when the user blur the martian date input
-  const handleMartianDateBlur = () => {
+  const handleMartianDateBlur = useCallback(() => {
     dispatch(setDateSelected(martianDate))
-  }
+  }, [dispatch, martianDate])
 
   // triggers the dispatch when the user press Enter on the martian date input
-  const handleMartianDateKeyPress = async (event) => {
-    if (event.key === 'Enter') {
-      dispatch(setDateSelected(martianDate))
-    }
-  }
+  const handleMartianDateKeyPress = useCallback(
+    (event) => {
+      if (event.key === 'Enter') {
+        dispatch(setDateSelected(martianDate))
+      }
+    },
+    [dispatch, martianDate]
+  )
 
   // triggers the dispatch when the user changes the date type
-  const handleToggleDate = () => {
+  const handleToggleDate = useCallback(() => {
     if (!isEarthDate) {
       dispatch(setDateSelected(earthDate))
     } else {
       dispatch(setDateSelected(martianDate))
     }
-
     setIsEarthDate(!isEarthDate)
-  }
+  }, [dispatch, earthDate, isEarthDate, martianDate])
 
   // opens the sidebar menu
-  const openNav = () => {
-    setSidebarOpened((sidebarOpened) => !sidebarOpened)
-  }
+  const openNav = useCallback(() => {
+    setSidebarOpened(true)
+  }, [])
 
   // closes the sidebar menu
-  const closeNav = () => {
+  const closeNav = useCallback(() => {
     setSidebarOpened(false)
-  }
+  }, [])
 
   // triggers the dispatch when the user select a rover, sets cameras on null
-  const selectRover = ({ rover }) => {
-    dispatch(setRoverSelected(rover))
-    dispatch(setCameraSelected(null))
-  }
+  const selectRover = useCallback(
+    ({ rover }) => {
+      dispatch(setRoverSelected(rover))
+      dispatch(setCameraSelected(null))
+    },
+    [dispatch]
+  )
 
   // triggers the dispatch when the user select a camera
-  const selectCamera = ({ camera }) => {
-    dispatch(setCameraSelected(camera))
-  }
+  const selectCamera = useCallback(
+    ({ camera }) => {
+      dispatch(setCameraSelected(camera))
+    },
+    [dispatch]
+  )
 
   // resets the saved api key
-  const forgetAPIKey = () => {
+  const forgetAPIKey = useCallback(() => {
     localStorage.removeItem('API_KEY')
     dispatch(setApiKey(null))
-  }
+  }, [dispatch])
 
   // saves the current config
-  const saveConfig = () => {
-    localStorage.setItem('roverSelected', JSON.stringify(general.roverSelected))
-    localStorage.setItem('cameraSelected', JSON.stringify(general.cameraSelected))
-    localStorage.setItem('dateSelected', general.dateSelected)
-    localStorage.setItem('isEarthDate', isEarthDate)
-
+  const saveConfig = useCallback(() => {
+    const config = {
+      roverSelected: general.roverSelected,
+      cameraSelected: general.cameraSelected,
+      dateSelected: isEarthDate ? earthDate : martianDate,
+      isEarthDate
+    }
+    localStorage.setItem('config', JSON.stringify(config))
     setSaveButtonText('Configuration Saved!')
-  }
+  }, [general.cameraSelected, general.roverSelected, earthDate, isEarthDate, martianDate])
 
   // loads the config saved
-  const loadConfig = () => {
-    const roverSelected = localStorage.getItem('roverSelected')
-    const cameraSelected = localStorage.getItem('cameraSelected')
-    const dateSelected = localStorage.getItem('dateSelected')
-    const isED = localStorage.getItem('isEarthDate')
+  const loadConfig = useCallback(() => {
+    const config = JSON.parse(localStorage.getItem('config'))
+    if (!config) return
 
-    // since we're using the same var for earth and martian date, checks which one is saved
-    if ((isED === 'true')) {
-      setIsEarthDate(true)
-      setEarthDate(new Date(dateSelected + 'T00:00:00'))
-      dispatch(setDateSelected(new Date(dateSelected + 'T00:00:00')))
+    dispatch(setRoverSelected(config.roverSelected))
+    dispatch(setCameraSelected(config.cameraSelected))
+    setIsEarthDate(config.isEarthDate)
+
+    if (config.isEarthDate) {
+      setEarthDate(new Date(config.dateSelected))
+      dispatch(setDateSelected(new Date(config.dateSelected)))
     } else {
-      setIsEarthDate(false)
-      setMartianDate(Number(dateSelected))
-      dispatch(setDateSelected(Number(dateSelected)))
+      setMartianDate(Number(config.dateSelected))
+      dispatch(setDateSelected(Number(config.dateSelected)))
     }
-
-    dispatch(setRoverSelected(JSON.parse(roverSelected)))
-    dispatch(setCameraSelected(JSON.parse(cameraSelected)))
-  }
+  }, [dispatch])
 
   // reset the button text on configuration change
   useEffect(() => {
