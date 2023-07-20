@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import Modal from 'react-modal'
 import { GetRequestToken, CancelRequestToken, GetImages } from './../../services/nasaService'
@@ -22,21 +22,20 @@ const Gallery = () => {
   const general = useSelector((state) => state.general)
 
   // open the image selected on a modal when clicked
-  const openModal = (url) => {
+  const openModal = useCallback((url) => {
     setModalImageUrl(url)
     setIsModalOpen(true)
-  }
+  }, [])
 
   // close the modal of the image selected
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsModalOpen(false)
-  }
+  }, [])
 
   // when the component is rendered, ask for a token for the requests
   // and gets the default images
   useEffect(() => {
     requestToken = GetRequestToken()
-
     fetchImages()
 
     return () => {
@@ -64,29 +63,34 @@ const Gallery = () => {
     setNoPhotos(false)
     setLoading(true)
 
-    if (general.roverSelected.name) {
+    try {
       // since we're using the same var for both Martian and Earth date, it checks which one is it
-      const dateFromPlanet = isDateVerifier(general.dateSelected) ? 'earth_date' : 'sol'
+      if (general.roverSelected.name) {
+        const dateFromPlanet = isDateVerifier(general.dateSelected) ? 'earth_date' : 'sol'
 
-      const newImages = await GetImages({
-        requestToken,
-        page,
-        API_KEY: general.API_KEY,
-        rover: general.roverSelected.name,
-        camera: general.cameraSelected?.id,
-        dateFromPlanet,
-        dateFromDate: general.dateSelected
-      })
+        const newImages = await GetImages({
+          requestToken,
+          page,
+          API_KEY: general.API_KEY,
+          rover: general.roverSelected.name,
+          camera: general.cameraSelected?.id,
+          dateFromPlanet,
+          dateFromDate: general.dateSelected
+        })
 
-      // the api could throw an error for overuse, so we handle that
-      if (!newImages.error) {
-        setApiErrorMessage('')
-        setImages((prevImages) => [...prevImages, ...newImages])
-        setPage((prevPage) => prevPage + 1)
-        newImages.length > 0 ? setNoPhotos(false) : setNoPhotos(true)
-      } else {
-        setApiErrorMessage(newImages.message)
+        // the api could throw an error for overuse, so we handle that
+        if (!newImages.error) {
+          setApiErrorMessage('')
+          setImages((prevImages) => [...prevImages, ...newImages])
+          setPage((prevPage) => prevPage + 1)
+          setNoPhotos(newImages.length === 0)
+        } else {
+          setApiErrorMessage(newImages.message)
+        }
       }
+    } catch (error) {
+      setApiErrorMessage('An error occurred while fetching images.')
+    } finally {
       setLoading(false)
     }
   }
@@ -99,26 +103,24 @@ const Gallery = () => {
       <InfiniteScroll
         dataLength={images.length}
         next={fetchImages}
-        hasMore={true}
-        loader={noPhotos && images.length !== 0 && <h4 style={{ color: 'white' }}>No photos retrieved</h4>}
+        hasMore={images.length > 0}
+        loader={noPhotos && images.length > 0 && <h4 style={{ color: 'white' }}>No photos retrieved</h4>}
       >
-        {images.map((image, index) => (
-          <img
-            key={index}
-            src={image.img_src}
-            alt={image.rover.name}
-            onClick={() => openModal(image.img_src)}
-            className='images'
-          />
-        ))}
-        <InfoMessages
-          apiErrorMessage={apiErrorMessage}
-          imagesLength={images.length}
-          loading={loading}
-        />
+        <div className="image-gallery">
+          {images.map((image, index) => (
+            <img
+              key={index}
+              src={image.img_src}
+              alt={image.rover.name}
+              onClick={() => openModal(image.img_src)}
+              className="images"
+            />
+          ))}
+        </div>
+        <InfoMessages apiErrorMessage={apiErrorMessage} imagesLength={images.length} loading={loading} />
       </InfiniteScroll>
       <Sidebar />
-      <Modal portalClassName='photo-modal' isOpen={isModalOpen} onRequestClose={closeModal}>
+      <Modal portalClassName="photo-modal" isOpen={isModalOpen} onRequestClose={closeModal}>
         <img src={modalImageUrl} alt="" />
       </Modal>
     </div>
